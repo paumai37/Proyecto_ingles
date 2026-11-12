@@ -1,0 +1,259 @@
+:root {
+  --primary: #0b7285;
+  --primary-dark: #095c6b;
+  --accent: #20c997;
+  --danger: #c62828;
+  --warning: #f59f00;
+  --light: #f1f8fa;
+  --text: #263238;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background: var(--light);
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ========== BARRA SUPERIOR ========== */
+.topbar {
+  background: var(--primary);
+  color: var(--white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 5%;
+}
+
+.topbar h1 {
+  font-size: 1.3rem;
+}
+
+.topbar span {
+  opacity: .85;
+  margin-right: 14px;
+}
+
+.topbar a {
+  background: var(--primary-dark);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.topbar a:hover {
+  background: var(--white);
+  color: var(--primary);
+}
+
+/* ========== CONTENIDO ========== */
+.container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 30px auto;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.card h2 {
+  color: var(--primary);
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+}
+
+.card h3 {
+  font-size: 1.05rem;
+  margin: 20px 0 10px;
+}
+
+.card > p {
+  color: #607d8b;
+  margin-bottom: 16px;
+}
+
+/* ========== FORMULARIOS ========== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: .9rem;
+  margin-bottom: 4px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #b0bec5;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: .95rem;
+  background: var(--white);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(11, 114, 133, .2);
+}
+
+/* ========== BOTONES ========== */
+button,
+.btn {
+  display: inline-block;
+  border: 0;
+  border-radius: 6px;
+  padding: 9px 18px;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--primary);
+  cursor: pointer;
+  transition: filter .2s;
+}
+
+button:hover,
+.btn:hover {
+  filter: brightness(.9);
+}
+
+.btn-create {
+  background: var(--accent);
+  color: #062b22;
+}
+
+.btn-edit {
+  background: var(--warning);
+  color: #3d2c00;
+  padding: 6px 12px;
+}
+
+.btn-delete {
+  background: var(--danger);
+  padding: 6px 12px;
+}
+
+.btn-clear {
+  background: #90a4ae;
+}
+
+/* ========== TABLAS ========== */
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .95rem;
+}
+
+th,
+td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e6e9;
+}
+
+th {
+  background: var(--primary);
+  color: var(--white);
+  white-space: nowrap;
+}
+
+tr:hover td {
+  background: var(--light);
+}
+
+td.actions {
+  white-space: nowrap;
+}
+
+td.actions button {
+  margin-right: 4px;
+}
+
+/* ========== PACIENTE: DATOS PERSONALES ========== */
+.info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px 24px;
+}
+
+.info div {
+  border-left: 4px solid var(--accent);
+  padding-left: 12px;
+}
+
+.info dt {
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #607d8b;
+}
+
+.info dd {
+  font-size: 1.05rem;
+}
+
+.readonly-note {
+  display: inline-block;
+  background: var(--light);
+  color: var(--primary);
+  font-size: .85rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 600px) {
+  .topbar {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .card {
+    padding: 16px;
+  }
+}

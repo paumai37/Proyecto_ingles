@@ -1,0 +1,142 @@
+:root {
+  --primary: #0b7285;
+  --primary-dark: #095c6b;
+  --light: #f1f8fa;
+  --text: #263238;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background: var(--light);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-box {
+  background: var(--white);
+  width: 90%;
+  max-width: 380px;
+  padding: 32px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+  text-align: center;
+}
+
+.login-box img {
+  display: block;
+  margin: 0 auto 10px;
+  height: auto;
+}
+
+.login-box h1 {
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+.login-box h2 {
+  font-size: 1.1rem;
+  margin: 4px 0 22px;
+}
+
+form {
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+input {
+  width: 37%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #b0bec5;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(11, 114, 133, .2);
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: var(--white);
+  border: 0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+.back {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #b0bec5;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    background: #ffffff;
+}
+
+    .login-box input[type="text"]:focus,
+    .login-box input[type="password"]:focus {
+        outline: none;
+        border-color: #0b7285;
+        box-shadow: 0 0 0 3px rgba(11, 114, 133, .2);
+    }
+
+.login-box input[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 0;
+    background: #0b7285;
+    color: #ffffff;
+    border: 0;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+    .login-box input[type="submit"]:hover {
+        background: #095c6b;
+    }
