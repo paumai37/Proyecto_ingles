@@ -43,8 +43,8 @@
         </div>
       </div>
       <asp:Button ID="btnCreateDoctor" runat="server" Text="Create doctor" CssClass="btn-create" OnClick="btnCreateDoctor_Click" />
-      <asp:Button ID="btnUpdateDoctor" runat="server" Text="Update doctor" CssClass="btn-edit" OnClick="btnUpdateDoctor_Click" />
-      <input type="reset" class="btn-clear" value="Clear" />
+      <asp:Button ID="Clear" runat="server" Text="Clear" CssClass="btn-clear" OnClick="Clear_Click" />
+      
 
       <h3>Doctor list</h3>
       <div class="table-wrap">
@@ -58,9 +58,20 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Las filas se cargan desde la base de datos.
-                 Cada fila: Name | ID | Mobile | botones Edit y Delete -->
-          </tbody>
+            <asp:Repeater ID="rptDoctors" runat="server" OnItemCommand="rptDoctors_ItemCommand">
+            <ItemTemplate>
+            <tr>
+                <td><%# Server.HtmlEncode(Eval("Name").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("NationalID").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("Mobile").ToString()) %></td>
+                <td>
+                    <asp:Button runat="server" Text="Delete" CssClass="btn-delete" CommandName="Delete" CommandArgument='<%# Eval("UserID") %>'
+                    OnClientClick="return confirm('Delete this doctor?');" />
+                </td>
+            </tr>
+            </ItemTemplate>
+            </asp:Repeater>
+        </tbody>
         </table>
       </div>
     </section>
@@ -88,7 +99,7 @@
           <asp:TextBox ID="patMobile" runat="server" TextMode="Phone"></asp:TextBox>
         </div>
         <div>
-          <label for="patDoctor">Doctor</label>
+          <label for="patDoctor">Family Doctor</label>
           <asp:DropDownList ID="patDoctor" runat="server"></asp:DropDownList>
         </div>
         <div class="full">
@@ -97,7 +108,6 @@
         </div>
       </div>
       <asp:Button ID="btnCreatePatient" runat="server" Text="Create patient" CssClass="btn-create" OnClick="btnCreatePatient_Click" />
-      <asp:Button ID="btnUpdatePatient" runat="server" Text="Update patient" CssClass="btn-edit" OnClick="btnUpdatePatient_Click" />
       <input type="reset" class="btn-clear" value="Clear" />
 
       <h3>Patient list</h3>
@@ -115,9 +125,23 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Las filas se cargan desde la base de datos.
-                 Cada fila: Name | ID | DOB | Address | Mobile | Doctor | botones Edit y Delete -->
-          </tbody>
+            <asp:Repeater ID="rptPatients" runat="server" OnItemCommand="rptPatients_ItemCommand">
+            <ItemTemplate>
+            <tr>
+                <td><%# Server.HtmlEncode(Eval("Name").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("NationalID").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("DOB").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("Address").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("Mobile").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("DoctorName").ToString()) %></td>
+                <td>
+                    <asp:Button runat="server" Text="Delete" CssClass="btn-delete" CommandName="Delete" CommandArgument='<%# Eval("UserID") %>'
+                    OnClientClick="return confirm('Delete this patient?');" />
+                </td>
+            </tr>
+            </ItemTemplate>
+            </asp:Repeater>
+        </tbody>
         </table>
       </div>
     </section>

@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
 
+
 namespace ProyectoEnglish
 {
     public partial class WebForm1 : System.Web.UI.Page
@@ -31,46 +32,71 @@ namespace ProyectoEnglish
         void inicioSesion()
         {
             string cadena = ConfigurationManager.ConnectionStrings["MiConexion"].ConnectionString;
-            string rol = null;
 
-            using (SQLiteConnection conn = new SQLiteConnection(cadena))
+            long userId = 0;
+            string perfil = null;
+            string username = TextBox1.Text.Trim();
+
+            using (var con = new SQLiteConnection(cadena))
             {
-                string sql = "SELECT Profile FROM login WHERE Username = @user AND Password = @pass";
+                con.Open();
 
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+                using (var cmd = new SQLiteCommand(
+                    "SELECT UserID, Profile FROM login WHERE Username = @user AND Password = @pass", con))
                 {
-                    cmd.Parameters.AddWithValue("@user", TextBox1.Text.Trim());
+                    cmd.Parameters.AddWithValue("@user", username);
                     cmd.Parameters.AddWithValue("@pass", TextBox2.Text);
 
-                    conn.Open();
-                    object resultado = cmd.ExecuteScalar();
-
-                    if (resultado != null)
+                    using (var rd = cmd.ExecuteReader())
                     {
-                        rol = resultado.ToString();
+                        if (rd.Read())
+                        {
+                            userId = rd.GetInt64(0);
+                            perfil = rd.GetString(1);
+                        }
                     }
                 }
-            }
 
-            if (rol == null)
-            {
-                lblMessage.Text = "Incorrect username or password.";
-                return;
-            }
+                if (perfil == null)
+                {
+                    lblMessage.Text = "Incorrect username or password.";
+                    return;
+                }
 
-            Session["Role"] = rol;
+                var roles = new List<string> { perfil };   // rol principal
 
-            if (rol == "Admin")
-            {
-                Response.Redirect("AdminPage.aspx");
-            }
-            else if (rol == "Doctor")
-            {
-                Response.Redirect("DoctorPage.aspx");
-            }
-            else if (rol == "Patient")
-            {
-                Response.Redirect("PatientPage.aspx");
+                if (perfil != "Patient")                   // Admin o Doctor: ¿también es paciente?
+                {
+                    using (var cmd = new SQLiteCommand(
+                        "SELECT 1 FROM patients WHERE UserID = @id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", userId);
+                        if (cmd.ExecuteScalar() != null) roles.Add("Patient");
+                    }
+                }
+
+                Session["UserID"] = userId;
+                Session["Username"] = username;
+                Session["Roles"] = roles;
+
+                if (roles.Count == 1)
+                {
+                    Session["Role"] = roles[0];
+
+                    switch (roles[0])
+                    {
+                        case "Admin": Response.Redirect("AdminPage.aspx"); break;
+                        case "Doctor": Response.Redirect("DoctorPage.aspx"); break;
+                        case "Patient": Response.Redirect("PatientPage.aspx"); break;
+                        default:
+                            lblMessage.Text = "Unknown profile.";
+                            break;
+                    }
+                }
+                else
+                {
+                    Response.Redirect("ChooseRole.aspx");
+                }
             }
         }
 

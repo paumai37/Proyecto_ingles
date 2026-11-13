@@ -137,45 +137,64 @@ textarea:focus {
 
 /* ========== BOTONES ========== */
 button,
-.btn {
-  display: inline-block;
-  border: 0;
-  border-radius: 6px;
-  padding: 9px 18px;
-  font-family: inherit;
-  font-size: .9rem;
-  font-weight: 700;
-  color: var(--white);
-  background: var(--primary);
-  cursor: pointer;
-  transition: filter .2s;
+.btn,
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+    display: inline-block;
+    width: auto; /* anula el width:100% de "input" */
+    border: 0;
+    border-radius: 6px;
+    padding: 9px 18px;
+    margin: 4px 6px 4px 0;
+    font-family: inherit;
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--white);
+    background: var(--primary);
+    cursor: pointer;
+    transition: filter .2s;
 }
 
-button:hover,
-.btn:hover {
-  filter: brightness(.9);
+    button:hover,
+    .btn:hover,
+    input[type="submit"]:hover,
+    input[type="button"]:hover,
+    input[type="reset"]:hover {
+        filter: brightness(.9);
+    }
+
+/* Variantes (con "input." para ganar en especificidad) */
+.btn-create,
+input.btn-create {
+    background: var(--accent);
+    color: #062b22;
 }
 
-.btn-create {
-  background: var(--accent);
-  color: #062b22;
+.btn-edit,
+input.btn-edit {
+    background: var(--warning);
+    color: #3d2c00;
 }
 
-.btn-edit {
-  background: var(--warning);
-  color: #3d2c00;
-  padding: 6px 12px;
+.btn-delete,
+input.btn-delete {
+    background: var(--danger);
+    color: var(--white);
 }
 
-.btn-delete {
-  background: var(--danger);
-  padding: 6px 12px;
+.btn-clear,
+input.btn-clear {
+    background: #90a4ae;
+    color: var(--white);
 }
 
-.btn-clear {
-  background: #90a4ae;
+/* Botones pequeños dentro de las tablas (Edit / Delete) */
+td.actions .btn-edit,
+td.actions .btn-delete {
+    padding: 6px 12px;
+    margin: 0 4px 0 0;
 }
-
 /* ========== TABLAS ========== */
 .table-wrap {
   overflow-x: auto;

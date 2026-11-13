@@ -69,13 +69,22 @@ namespace ProyectoEnglish
         protected global::System.Web.UI.WebControls.Button btnCreateDoctor;
 
         /// <summary>
-        /// btnUpdateDoctor control.
+        /// Clear control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnUpdateDoctor;
+        protected global::System.Web.UI.WebControls.Button Clear;
+
+        /// <summary>
+        /// rptDoctors control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptDoctors;
 
         /// <summary>
         /// patName control.
@@ -141,12 +150,12 @@ namespace ProyectoEnglish
         protected global::System.Web.UI.WebControls.Button btnCreatePatient;
 
         /// <summary>
-        /// btnUpdatePatient control.
+        /// rptPatients control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnUpdatePatient;
+        protected global::System.Web.UI.WebControls.Repeater rptPatients;
     }
 }
