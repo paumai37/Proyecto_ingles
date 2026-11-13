@@ -1,159 +1,116 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DoctorPage.aspx.cs" Inherits="ProyectoEnglish.WebForm5" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PatientPage.aspx.cs" Inherits="ProyectoEnglish.WebForm3" %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doctor | Healthcare Centre</title>
+  <title>Patient | Healthcare Centre</title>
   <link rel="stylesheet" href="css/panel.css">
 </head>
 <body>
 
-  <form id="form1" runat="server">
-
   <!-- ========== BARRA SUPERIOR ========== -->
   <header class="topbar">
-    <h1>Healthcare Centre – Doctor</h1>
+    <h1>Healthcare Centre – Patient</h1>
     <div>
       <span>Logged in as: <strong id="loggedUser" runat="server"></strong></span>
-      <a href="Login.aspx">Log out</a>
+      <a href="login.aspx">Log out</a>
     </div>
   </header>
 
   <main class="container">
 
-    <!-- ========== SELECCIÓN DE PACIENTE ========== -->
+    <!-- ========== DATOS PERSONALES ========== -->
     <section class="card">
-      <h2>My patients</h2>
-      <p>Select one of your patients to manage their medical records.</p>
+      <h2>Personal information</h2>
+      <span class="readonly-note">Read-only</span>
 
-      <div class="form-grid">
+      <!-- Los valores se cargan desde la base de datos -->
+      <dl class="info">
         <div>
-          <label for="selPatient">Patient</label>
-          <asp:DropDownList ID="selPatient" runat="server"></asp:DropDownList>
+          <dt>Name</dt>
+          <dd id="patName" runat="server"></dd>
         </div>
-      </div>
-      <asp:Button ID="btnViewRecords" runat="server" Text="View records" OnClick="btnViewRecords_Click" />
-    </section>
-
-    <!-- ========== NUEVO / EDITAR HISTORIAL ========== -->
-    <section class="card">
-      <h2>Add / edit medical record</h2>
-      <p>Patient: <strong id="selectedPatient" runat="server"></strong></p>
-
-      <asp:HiddenField ID="hfRecordID" runat="server" />
-
-      <div class="form-grid">
         <div>
-          <label for="recDate">Date of the appointment</label>
-          <asp:TextBox ID="recDate" runat="server" TextMode="Date"></asp:TextBox>
+          <dt>ID</dt>
+          <dd id="patId" runat="server"></dd>
         </div>
-        <div class="full">
-          <label for="recDiagnosis">Diagnosis</label>
-          <asp:TextBox ID="recDiagnosis" runat="server" TextMode="MultiLine" Rows="3"></asp:TextBox>
+        <div>
+          <dt>Date of birth</dt>
+          <dd id="patDob" runat="server"></dd>
         </div>
-        <div class="full">
-          <label for="recTreatment">Treatment</label>
-          <asp:TextBox ID="recTreatment" runat="server" TextMode="MultiLine" Rows="3"></asp:TextBox>
+        <div>
+          <dt>Address</dt>
+          <dd id="patAddress" runat="server"></dd>
         </div>
-      </div>
-      <asp:Button ID="btnCreateRecord" runat="server" Text="Create record" CssClass="btn-create" OnClick="btnCreateRecord_Click" />
-      <asp:Button ID="btnUpdateRecord" runat="server" Text="Update record" CssClass="btn-edit" OnClick="btnUpdateRecord_Click" />
-      <asp:Button ID="btnClearRecord" runat="server" Text="Clear" CssClass="btn-clear" OnClick="btnClearRecord_Click" />
+        <div>
+          <dt>Mobile</dt>
+          <dd id="patMobile" runat="server"></dd>
+        </div>
+        <div>
+          <dt>My doctor</dt>
+          <dd id="patDoctor" runat="server"></dd>
+        </div>
+      </dl>
     </section>
 
-    <!-- ========== LISTA DE HISTORIALES ========== -->
-    <section class="card">
-      <h2>Medical records</h2>
-      <p>Records of the selected patient.</p>
-
-      <div class="table-wrap">
-        <table id="recordsTable">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Diagnosis</th>
-              <th>Treatment</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <asp:Repeater ID="rptRecords" runat="server" OnItemCommand="rptRecords_ItemCommand">
-              <ItemTemplate>
-                <tr>
-                  <td><%# Server.HtmlEncode(Convert.ToString(Eval("AppointmentDate"))) %></td>
-                  <td><%# Server.HtmlEncode(Convert.ToString(Eval("Diagnosis"))) %></td>
-                  <td><%# Server.HtmlEncode(Convert.ToString(Eval("Treatment"))) %></td>
-                  <td class="actions">
-                    <asp:Button runat="server" Text="Edit" CssClass="btn-edit" CommandName="Edit" CommandArgument='<%# Eval("RecordID") %>' />
-                    <asp:Button runat="server" Text="Delete" CssClass="btn-delete" CommandName="Delete" CommandArgument='<%# Eval("RecordID") %>'
-                      OnClientClick="return confirm('Delete this record?');" />
-                  </td>
-                </tr>
-              </ItemTemplate>
-            </asp:Repeater>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <!-- ========== CITAS ========== -->
+  <form id="formCitas" runat="server">
 
     <!-- ========== AGENDAR CITA ========== -->
     <section class="card">
-      <h2>Schedule an appointment</h2>
-      <p>Book an appointment for one of your patients.</p>
+      <h2>Book an appointment</h2>
+      <p>Choose a doctor, a date and a time.</p>
 
       <div class="form-grid">
         <div>
-          <label for="dapPatient">Patient</label>
-          <asp:DropDownList ID="dapPatient" runat="server"></asp:DropDownList>
+          <label for="apDoctor">Doctor</label>
+          <asp:DropDownList ID="apDoctor" runat="server"></asp:DropDownList>
         </div>
         <div>
-          <label for="dapDate">Date</label>
-          <asp:TextBox ID="dapDate" runat="server" TextMode="Date"></asp:TextBox>
+          <label for="apDate">Date</label>
+          <asp:TextBox ID="apDate" runat="server" TextMode="Date"></asp:TextBox>
         </div>
         <div>
-          <label for="dapTime">Time</label>
-          <asp:TextBox ID="dapTime" runat="server" TextMode="Time" step="1800" min="09:00" max="19:30"></asp:TextBox>
+          <label for="apTime">Time</label>
+          <asp:TextBox ID="apTime" runat="server" TextMode="Time" step="1800" min="09:00" max="19:30"></asp:TextBox>
         </div>
         <div class="full">
-          <label for="dapReason">Reason</label>
-          <asp:TextBox ID="dapReason" runat="server" TextMode="MultiLine" Rows="3"></asp:TextBox>
+          <label for="apReason">Reason</label>
+          <asp:TextBox ID="apReason" runat="server" TextMode="MultiLine" Rows="3"></asp:TextBox>
         </div>
       </div>
-      <asp:Button ID="btnScheduleAppointment" runat="server" Text="Schedule appointment" CssClass="btn-create" OnClick="btnScheduleAppointment_Click" />
+      <asp:Button ID="btnBookAppointment" runat="server" Text="Book appointment" CssClass="btn-create" OnClick="btnBookAppointment_Click" />
     </section>
 
-    <!-- ========== AGENDA ========== -->
+    <!-- ========== MIS CITAS ========== -->
     <section class="card">
-      <h2>My agenda</h2>
-      <p>Appointments with your patients.</p>
+      <h2>My appointments</h2>
+      <p>Your upcoming and past appointments.</p>
 
       <div class="table-wrap">
-        <table id="rptAgendaTable">
+        <table id="rptAppointmentsTable">
           <thead>
             <tr>
               <th>Date</th>
               <th>Time</th>
-              <th>Patient</th>
+              <th>Doctor</th>
               <th>Reason</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <asp:Repeater ID="rptAgenda" runat="server" OnItemCommand="rptAgenda_ItemCommand">
+            <asp:Repeater ID="rptAppointments" runat="server" OnItemCommand="rptAppointments_ItemCommand">
               <ItemTemplate>
                 <tr>
                   <td><%# Server.HtmlEncode(Convert.ToString(Eval("AppointmentDate"))) %></td>
                   <td><%# Server.HtmlEncode(Convert.ToString(Eval("AppointmentTime"))) %></td>
-                  <td><%# Server.HtmlEncode(Convert.ToString(Eval("PatientName"))) %></td>
+                  <td><%# Server.HtmlEncode(Convert.ToString(Eval("DoctorName"))) %></td>
                   <td><%# Server.HtmlEncode(Convert.ToString(Eval("Reason"))) %></td>
                   <td><%# Server.HtmlEncode(Convert.ToString(Eval("Status"))) %></td>
                   <td class="actions">
-                    <asp:Button runat="server" Text="Done" CssClass="btn-create" CommandName="CompleteAppt"
-                      CommandArgument='<%# Eval("AppointmentID") %>'
-                      Visible='<%# Convert.ToString(Eval("Status")) == "Scheduled" %>' />
                     <asp:Button runat="server" Text="Cancel" CssClass="btn-delete" CommandName="CancelAppt"
                       CommandArgument='<%# Eval("AppointmentID") %>'
                       Visible='<%# Convert.ToString(Eval("Status")) == "Scheduled" %>'
@@ -167,31 +124,38 @@
       </div>
     </section>
 
-    <!-- ========== CAMBIAR CONTRASEÑA ========== -->
-    <section class="card">
-      <h2>Change password</h2>
-      <p>Use at least 6 characters, with letters and numbers.</p>
+  </form>
 
-      <div class="form-grid">
-        <div>
-          <label for="curPass">Current password</label>
-          <asp:TextBox ID="curPass" runat="server" TextMode="Password"></asp:TextBox>
-        </div>
-        <div>
-          <label for="newPass">New password</label>
-          <asp:TextBox ID="newPass" runat="server" TextMode="Password"></asp:TextBox>
-        </div>
-        <div>
-          <label for="confirmPass">Confirm new password</label>
-          <asp:TextBox ID="confirmPass" runat="server" TextMode="Password"></asp:TextBox>
-        </div>
+    <!-- ========== HISTORIAL MÉDICO ========== -->
+    <section class="card">
+      <h2>My medical records</h2>
+      <span class="readonly-note">Read-only</span>
+
+      <div class="table-wrap">
+        <table id="recordsTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Diagnosis</th>
+              <th>Treatment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <asp:Repeater ID="rptRecords" runat="server">
+            <ItemTemplate>
+            <tr>
+                <td><%# Server.HtmlEncode(Convert.ToString(Eval("AppointmentDate"))) %></td>
+                <td><%# Server.HtmlEncode(Convert.ToString(Eval("Diagnosis"))) %></td>
+                <td><%# Server.HtmlEncode(Convert.ToString(Eval("Treatment"))) %></td>
+            </tr>
+            </ItemTemplate>
+            </asp:Repeater>
+        </tbody>
+        </table>
       </div>
-      <asp:Button ID="btnChangePassword" runat="server" Text="Change password" CssClass="btn-edit" OnClick="btnChangePassword_Click" />
     </section>
 
   </main>
-
-  </form>
 
 </body>
 </html>

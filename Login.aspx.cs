@@ -9,7 +9,6 @@ using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
 
-
 namespace ProyectoEnglish
 {
     public partial class WebForm1 : System.Web.UI.Page
@@ -42,7 +41,6 @@ namespace ProyectoEnglish
             {
                 con.Open();
 
-                // Se busca solo por usuario: la contraseña se compara después en C#
                 using (var cmd = new SQLiteCommand(
                     "SELECT UserID, Profile, Password FROM login WHERE Username = @user", con))
                 {
@@ -65,14 +63,10 @@ namespace ProyectoEnglish
                 {
                     if (PasswordHasher.IsHashed(hashGuardado))
                     {
-                        // Hashea lo escrito y lo compara con el hash de la base de datos
                         valida = PasswordHasher.Verify(TextBox2.Text, hashGuardado);
                     }
                     else if (hashGuardado == TextBox2.Text)
                     {
-                        // Cuenta antigua con contraseña en texto plano:
-                        // se acepta una vez y se convierte a hash en ese momento.
-                        // (Puedes borrar este bloque cuando todas las cuentas estén hasheadas)
                         valida = true;
                         using (var upd = new SQLiteCommand(
                             "UPDATE login SET Password = @hash WHERE UserID = @id", con))
@@ -90,15 +84,20 @@ namespace ProyectoEnglish
                     return;
                 }
 
-                var roles = new List<string> { perfil };   // rol principal
+                var roles = new List<string> { perfil };   // rol principal (Doctor)
 
-                if (perfil != "Patient")                   // Admin o Doctor: ¿también es paciente?
+                // Comprobación directa y robusta de si existe registro en patients para este UserID
+                if (perfil != "Patient")
                 {
                     using (var cmd = new SQLiteCommand(
-                        "SELECT 1 FROM patients WHERE UserID = @id", con))
+                        "SELECT COUNT(*) FROM patients WHERE UserID = @id", con))
                     {
                         cmd.Parameters.AddWithValue("@id", userId);
-                        if (cmd.ExecuteScalar() != null) roles.Add("Patient");
+                        long count = Convert.ToInt64(cmd.ExecuteScalar());
+                        if (count > 0 && !roles.Contains("Patient"))
+                        {
+                            roles.Add("Patient");
+                        }
                     }
                 }
 
@@ -136,7 +135,5 @@ namespace ProyectoEnglish
         {
 
         }
-
-
     }
 }

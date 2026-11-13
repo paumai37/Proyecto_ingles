@@ -9,6 +9,7 @@ namespace ProyectoEnglish
         protected void Page_Load(object sender, EventArgs e)
         {
             var roles = Session["Roles"] as List<string>;
+
             if (roles == null)
             {
                 Response.Redirect("Login.aspx");
