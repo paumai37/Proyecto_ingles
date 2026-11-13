@@ -67,6 +67,7 @@
                 <td>
                     <asp:Button runat="server" Text="Delete" CssClass="btn-delete" CommandName="Delete" CommandArgument='<%# Eval("UserID") %>'
                     OnClientClick="return confirm('Delete this doctor?');" />
+                    
                 </td>
             </tr>
             </ItemTemplate>
@@ -137,6 +138,7 @@
                 <td>
                     <asp:Button runat="server" Text="Delete" CssClass="btn-delete" CommandName="Delete" CommandArgument='<%# Eval("UserID") %>'
                     OnClientClick="return confirm('Delete this patient?');" />
+                    <asp:Button runat="server" Text="Edit" CssClass="btn-edit" CommandName="Edit" CommandArgument='<%# Eval("UserID") %>' />
                 </td>
             </tr>
             </ItemTemplate>
@@ -147,6 +149,47 @@
     </section>
 
   </main>
+      <asp:Panel ID="pnlEdit" runat="server" CssClass="modal">
+  <div class="modal-box">
+    <h2>Edit patient</h2>
+    <asp:HiddenField ID="hfEditUserID" runat="server" />
+
+    <div class="form-grid">
+      <div>
+        <label for="editName">Name</label>
+        <asp:TextBox ID="editName" runat="server"></asp:TextBox>
+      </div>
+      <div>
+        <label for="editId">ID</label>
+        <asp:TextBox ID="editId" runat="server"></asp:TextBox>
+      </div>
+      <div>
+        <label for="editDob">Date of birth</label>
+        <asp:TextBox ID="editDob" runat="server" TextMode="Date"></asp:TextBox>
+      </div>
+      <div>
+        <label for="editMobile">Mobile</label>
+        <asp:TextBox ID="editMobile" runat="server" TextMode="Phone"></asp:TextBox>
+      </div>
+      <div>
+        <label for="editFamilyDoctor">Family Doctor</label>
+        <asp:DropDownList ID="editFamilyDoctor" runat="server"></asp:DropDownList>
+      </div>
+      <div class="full">
+        <label for="editAddress">Address</label>
+        <asp:TextBox ID="editAddress" runat="server"></asp:TextBox>
+      </div>
+    </div>
+
+    <h3>Assigned doctors</h3>
+    <asp:CheckBoxList ID="cblDoctors" runat="server" CssClass="check-list" RepeatLayout="Flow"></asp:CheckBoxList>
+
+    <div class="modal-actions">
+      <asp:Button ID="btnSaveEdit" runat="server" Text="Save" CssClass="btn-create" OnClick="btnSaveEdit_Click" />
+      <asp:Button ID="btnCancelEdit" runat="server" Text="Cancel" CssClass="btn-clear" OnClick="btnCancelEdit_Click" CausesValidation="false" />
+    </div>
+  </div>
+</asp:Panel>
 
   </form>
 
