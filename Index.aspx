@@ -13,7 +13,7 @@
  
   
   <header id="home">
-    <img src="images/logo.png" alt="Healthcare Centre logo" width="80">
+    <img src="images/logo.jpg" alt="Healthcare Centre logo" width="80">
     <h1>Healthcare Centre</h1>
     <p>Your health, our priority</p>
 

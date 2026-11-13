@@ -11,7 +11,7 @@
 <body>
 
   <main class="login-box">
-    <img src="images/logo.png" alt="Healthcare Centre logo" width="70">
+    <img src="images/logo.jpg" alt="Healthcare Centre logo" width="70">
     <h1>Healthcare Centre</h1>
     <h2>Log in</h2>
 
