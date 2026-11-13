@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -366,6 +367,57 @@ namespace ProyectoEnglish
             }
 
             ListAgenda();
+        }
+
+
+
+        protected void btnChangePassword_Click(object sender, EventArgs e)
+        {
+            if (curPass.Text == "" || newPass.Text == "" || confirmPass.Text == "")
+            {
+                Alerta("Rellena todos los campos.");
+                return;
+            }
+
+            if (newPass.Text != confirmPass.Text)
+            {
+                Alerta("Las contraseñas nuevas no coinciden.");
+                return;
+            }
+
+            if (!Regex.IsMatch(newPass.Text, @"^(?=.*[A-Za-z])(?=.*\d).{6,}$"))
+            {
+                Alerta("La nueva contraseña debe tener al menos 6 caracteres, con letras y números.");
+                return;
+            }
+
+            string cadena = ConfigurationManager.ConnectionStrings["MiConexion"].ConnectionString;
+
+            try
+            {
+                using (var con = new SQLiteConnection(cadena))
+                {
+                    con.Open();
+                    using (var cmd = new SQLiteCommand(
+                        "UPDATE login SET Password = @new WHERE UserID = @me AND Password = @old;", con))
+                    {
+                        cmd.Parameters.AddWithValue("@new", newPass.Text);
+                        cmd.Parameters.AddWithValue("@old", curPass.Text);
+                        cmd.Parameters.AddWithValue("@me", Session["UserID"]);
+
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            Alerta("La contraseña actual no es correcta.");
+                            return;
+                        }
+                    }
+                }
+                Alerta("Contraseña cambiada.");
+            }
+            catch (SQLiteException ex)
+            {
+                Alerta("Error: " + ex.Message.Replace("\r", " ").Replace("\n", " "));
+            }
         }
 
 
