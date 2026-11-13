@@ -30,7 +30,7 @@
       <asp:Label ID="lblMessage" runat="server" CssClass="error"></asp:Label>
     </form>
 
-    <a href="index.html" class="back">&larr; Back to home</a>
+    <a href="index.aspx" class="back">&larr; Back to home</a>
   </main>
 
 </body>
