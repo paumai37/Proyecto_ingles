@@ -35,17 +35,18 @@ namespace ProyectoEnglish
 
             long userId = 0;
             string perfil = null;
+            string hashGuardado = null;
             string username = TextBox1.Text.Trim();
 
             using (var con = new SQLiteConnection(cadena))
             {
                 con.Open();
 
+                // Se busca solo por usuario: la contraseña se compara después en C#
                 using (var cmd = new SQLiteCommand(
-                    "SELECT UserID, Profile FROM login WHERE Username = @user AND Password = @pass", con))
+                    "SELECT UserID, Profile, Password FROM login WHERE Username = @user", con))
                 {
                     cmd.Parameters.AddWithValue("@user", username);
-                    cmd.Parameters.AddWithValue("@pass", TextBox2.Text);
 
                     using (var rd = cmd.ExecuteReader())
                     {
@@ -53,11 +54,37 @@ namespace ProyectoEnglish
                         {
                             userId = rd.GetInt64(0);
                             perfil = rd.GetString(1);
+                            hashGuardado = rd.GetString(2);
                         }
                     }
                 }
 
-                if (perfil == null)
+                bool valida = false;
+
+                if (perfil != null)
+                {
+                    if (PasswordHasher.IsHashed(hashGuardado))
+                    {
+                        // Hashea lo escrito y lo compara con el hash de la base de datos
+                        valida = PasswordHasher.Verify(TextBox2.Text, hashGuardado);
+                    }
+                    else if (hashGuardado == TextBox2.Text)
+                    {
+                        // Cuenta antigua con contraseña en texto plano:
+                        // se acepta una vez y se convierte a hash en ese momento.
+                        // (Puedes borrar este bloque cuando todas las cuentas estén hasheadas)
+                        valida = true;
+                        using (var upd = new SQLiteCommand(
+                            "UPDATE login SET Password = @hash WHERE UserID = @id", con))
+                        {
+                            upd.Parameters.AddWithValue("@hash", PasswordHasher.Hash(TextBox2.Text));
+                            upd.Parameters.AddWithValue("@id", userId);
+                            upd.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+                if (!valida)
                 {
                     lblMessage.Text = "Incorrect username or password.";
                     return;
@@ -110,6 +137,6 @@ namespace ProyectoEnglish
 
         }
 
-        
+
     }
 }

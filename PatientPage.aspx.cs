@@ -273,18 +273,43 @@ namespace ProyectoEnglish
             try
             {
                 using (var con = new SQLiteConnection(Cadena))
-                using (var cmd = new SQLiteCommand(
-                    "UPDATE login SET Password = @new WHERE UserID = @me AND Password = @old", con))
                 {
-                    cmd.Parameters.AddWithValue("@new", newPass.Text);
-                    cmd.Parameters.AddWithValue("@old", curPass.Text);
-                    cmd.Parameters.AddWithValue("@me", UserId);
                     con.Open();
 
-                    if (cmd.ExecuteNonQuery() == 0)
+                    // 1) Leer el hash guardado de este usuario
+                    string hashGuardado = null;
+                    using (var cmd = new SQLiteCommand(
+                        "SELECT Password FROM login WHERE UserID = @me", con))
+                    {
+                        cmd.Parameters.AddWithValue("@me", UserId);
+                        object r = cmd.ExecuteScalar();
+                        if (r != null) hashGuardado = Convert.ToString(r);
+                    }
+
+                    // 2) Comprobar que la contraseña actual es correcta
+                    //    (hasheando lo escrito y comparando con el hash guardado)
+                    bool actualCorrecta = false;
+                    if (hashGuardado != null)
+                    {
+                        if (PasswordHasher.IsHashed(hashGuardado))
+                            actualCorrecta = PasswordHasher.Verify(curPass.Text, hashGuardado);
+                        else
+                            actualCorrecta = (hashGuardado == curPass.Text); // cuenta antigua en texto plano
+                    }
+
+                    if (!actualCorrecta)
                     {
                         Alerta("La contraseña actual no es correcta.");
                         return;
+                    }
+
+                    // 3) Guardar la nueva contraseña SIEMPRE hasheada
+                    using (var cmd = new SQLiteCommand(
+                        "UPDATE login SET Password = @new WHERE UserID = @me", con))
+                    {
+                        cmd.Parameters.AddWithValue("@new", PasswordHasher.Hash(newPass.Text));
+                        cmd.Parameters.AddWithValue("@me", UserId);
+                        cmd.ExecuteNonQuery();
                     }
                 }
 

@@ -13,6 +13,9 @@ namespace ProyectoEnglish
 {
     public partial class WebForm4 : System.Web.UI.Page
     {
+        // Contraseña inicial de las cuentas nuevas (se guarda siempre hasheada)
+        private const string PasswordInicial = "123456";
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["Role"] == null || Session["Role"].ToString() != "Admin")
@@ -50,6 +53,10 @@ namespace ProyectoEnglish
         {
             string nombre = docName.Text.Trim();
             if (nombre == "") { Alerta("El nombre es obligatorio."); return; }
+
+            // Regex: DNI/NIE y teléfono
+            if (!Validador.EsDocumento(docId.Text.Trim())) { Alerta("DNI/NIE no válido (ej: 12345678Z)."); return; }
+            if (!Validador.EsTelefono(docMobile.Text)) { Alerta("Teléfono no válido (9-15 dígitos, prefijo + opcional)."); return; }
 
             string cadena = ConfigurationManager.ConnectionStrings["MiConexion"].ConnectionString;
 
@@ -93,11 +100,12 @@ namespace ProyectoEnglish
                         }
                         else
                         {
-                            // 2b) No existe: crear el login como Doctor
+                            // 2b) No existe: crear el login como Doctor (contraseña hasheada)
                             using (var cmd = new SQLiteCommand(
-                                "INSERT INTO login (Username, Password, Profile) VALUES (@nombre, '123456', 'Doctor');", con, tx))
+                                "INSERT INTO login (Username, Password, Profile) VALUES (@nombre, @pass, 'Doctor');", con, tx))
                             {
                                 cmd.Parameters.AddWithValue("@nombre", nombre);
+                                cmd.Parameters.AddWithValue("@pass", PasswordHasher.Hash(PasswordInicial));
                                 cmd.ExecuteNonQuery();
                             }
                             userId = con.LastInsertRowId;
@@ -110,7 +118,7 @@ namespace ProyectoEnglish
                         {
                             cmd.Parameters.AddWithValue("@userId", userId);
                             cmd.Parameters.AddWithValue("@nombre", nombre);
-                            cmd.Parameters.AddWithValue("@nationalID", docId.Text.Trim());
+                            cmd.Parameters.AddWithValue("@nationalID", docId.Text.Trim().ToUpper());
                             cmd.Parameters.AddWithValue("@mobile", docMobile.Text.Trim());
                             cmd.ExecuteNonQuery();
                         }
@@ -245,6 +253,10 @@ namespace ProyectoEnglish
                 return;
             }
 
+            // Regex: DNI/NIE y teléfono
+            if (!Validador.EsDocumento(patId.Text.Trim())) { Alerta("DNI/NIE no válido (ej: 12345678Z)."); return; }
+            if (!Validador.EsTelefono(patMobile.Text)) { Alerta("Teléfono no válido (9-15 dígitos, prefijo + opcional)."); return; }
+
             string cadena = ConfigurationManager.ConnectionStrings["MiConexion"].ConnectionString;
 
             try
@@ -282,14 +294,15 @@ namespace ProyectoEnglish
                         }
                         else
                         {
-                            // 2b) No existe: crear el login como Patient
+                            // 2b) No existe: crear el login como Patient (contraseña hasheada)
                             using (var cmd = new SQLiteCommand(
-                                "INSERT INTO login (Username, Password, Profile) VALUES (@nombre, '123456', 'Patient');", con, tx))
+                                "INSERT INTO login (Username, Password, Profile) VALUES (@nombre, @pass, 'Patient');", con, tx))
                             {
                                 cmd.Parameters.AddWithValue("@nombre", nombre);
+                                cmd.Parameters.AddWithValue("@pass", PasswordHasher.Hash(PasswordInicial));
                                 cmd.ExecuteNonQuery();
                             }
-                            userId = con.LastInsertRowId;   // en vez de SELECT MAX(UserID)
+                            userId = con.LastInsertRowId;
                         }
 
                         // 3) Insertar en patients con el UserID correcto
@@ -299,7 +312,7 @@ namespace ProyectoEnglish
                         {
                             cmd.Parameters.AddWithValue("@userId", userId);
                             cmd.Parameters.AddWithValue("@nombre", nombre);
-                            cmd.Parameters.AddWithValue("@nationalID", patId.Text.Trim());
+                            cmd.Parameters.AddWithValue("@nationalID", patId.Text.Trim().ToUpper());
                             cmd.Parameters.AddWithValue("@mobile", patMobile.Text.Trim());
                             cmd.Parameters.AddWithValue("@address", patAddress.Text.Trim());
                             cmd.Parameters.AddWithValue("@dob", patDob.Text);
@@ -539,6 +552,10 @@ namespace ProyectoEnglish
                 return;
             }
 
+            // Regex: DNI/NIE y teléfono
+            if (!Validador.EsDocumento(editId.Text.Trim())) { Alerta("DNI/NIE no válido (ej: 12345678Z)."); return; }
+            if (!Validador.EsTelefono(editMobile.Text)) { Alerta("Teléfono no válido (9-15 dígitos, prefijo + opcional)."); return; }
+
             string cadena = ConfigurationManager.ConnectionStrings["MiConexion"].ConnectionString;
 
             try
@@ -553,7 +570,7 @@ namespace ProyectoEnglish
                             "Address = @a, FamilyDoctorID = @fd WHERE UserID = @id;", con, tx))
                         {
                             cmd.Parameters.AddWithValue("@n", editName.Text.Trim());
-                            cmd.Parameters.AddWithValue("@nid", editId.Text.Trim());
+                            cmd.Parameters.AddWithValue("@nid", editId.Text.Trim().ToUpper());
                             cmd.Parameters.AddWithValue("@dob", editDob.Text);
                             cmd.Parameters.AddWithValue("@m", editMobile.Text.Trim());
                             cmd.Parameters.AddWithValue("@a", editAddress.Text.Trim());
