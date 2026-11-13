@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -84,9 +84,7 @@ namespace ProyectoEnglish
                     return;
                 }
 
-                var roles = new List<string> { perfil };   // rol principal (Doctor)
-
-                // Comprobación directa y robusta de si existe registro en patients para este UserID
+                var roles = new List<string> { perfil };
                 if (perfil != "Patient")
                 {
                     using (var cmd = new SQLiteCommand(

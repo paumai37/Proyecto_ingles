@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 
@@ -29,8 +29,6 @@ namespace ProyectoEnglish
         {
             var roles = Session["Roles"] as List<string>;
             string elegido = Convert.ToString(e.CommandArgument);
-
-            // Validar siempre en servidor
             if (roles == null || !roles.Contains(elegido)) return;
 
             Session["Role"] = elegido;

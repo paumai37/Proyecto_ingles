@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
@@ -22,7 +22,6 @@ namespace ProyectoEnglish
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Solo entra quien eligió el rol Patient
             if (Session["Role"] == null || Session["Role"].ToString() != "Patient" || !(Session["UserID"] is long))
             {
                 Response.Redirect("Login.aspx");
@@ -39,8 +38,6 @@ namespace ProyectoEnglish
                 LoadAppointments();
             }
         }
-
-        // ===================== CARGA DE DATOS =====================
 
         void LoadDoctors()
         {
@@ -120,8 +117,6 @@ namespace ProyectoEnglish
                     patAddress.InnerText = Convert.ToString(rd["Address"]);
                     patMobile.InnerText = Convert.ToString(rd["Mobile"]);
                     patDoctor.InnerText = Convert.ToString(rd["DoctorName"]);
-
-                    // La fecha se guarda como yyyy-MM-dd; se muestra como dd/MM/yyyy
                     string dobTxt = Convert.ToString(rd["DOB"]);
                     DateTime dob;
                     patDob.InnerText = DateTime.TryParseExact(dobTxt, "yyyy-MM-dd", CultureInfo.InvariantCulture,
@@ -131,8 +126,6 @@ namespace ProyectoEnglish
                 }
             }
         }
-
-        // ===================== RESERVAR CITA =====================
 
         protected void btnBookAppointment_Click(object sender, EventArgs e)
         {
@@ -175,8 +168,6 @@ namespace ProyectoEnglish
                 using (var con = new SQLiteConnection(Cadena))
                 {
                     con.Open();
-
-                    // ¿El doctor ya tiene una cita activa a esa hora?
                     using (var cmd = new SQLiteCommand(
                         "SELECT 1 FROM appointments WHERE DoctorID = @d AND AppointmentDate = @f " +
                         "AND AppointmentTime = @h AND Status <> 'Cancelled'", con))
@@ -218,8 +209,6 @@ namespace ProyectoEnglish
             LoadAppointments();
         }
 
-        // ===================== CANCELAR CITA =====================
-
         protected void rptAppointments_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName != "CancelAppt") return;
@@ -227,7 +216,6 @@ namespace ProyectoEnglish
             try
             {
                 using (var con = new SQLiteConnection(Cadena))
-                // Solo cancela citas propias y que sigan activas
                 using (var cmd = new SQLiteCommand(
                     "UPDATE appointments SET Status = 'Cancelled' " +
                     "WHERE AppointmentID = @id AND PatientID = @me AND Status = 'Scheduled'", con))
@@ -247,8 +235,6 @@ namespace ProyectoEnglish
 
             LoadAppointments();
         }
-
-        // ===================== CAMBIAR CONTRASEÑA =====================
 
         protected void btnChangePassword_Click(object sender, EventArgs e)
         {
@@ -275,8 +261,6 @@ namespace ProyectoEnglish
                 using (var con = new SQLiteConnection(Cadena))
                 {
                     con.Open();
-
-                    // 1) Leer el hash guardado de este usuario
                     string hashGuardado = null;
                     using (var cmd = new SQLiteCommand(
                         "SELECT Password FROM login WHERE UserID = @me", con))
@@ -285,16 +269,13 @@ namespace ProyectoEnglish
                         object r = cmd.ExecuteScalar();
                         if (r != null) hashGuardado = Convert.ToString(r);
                     }
-
-                    // 2) Comprobar que la contraseña actual es correcta
-                    //    (hasheando lo escrito y comparando con el hash guardado)
                     bool actualCorrecta = false;
                     if (hashGuardado != null)
                     {
                         if (PasswordHasher.IsHashed(hashGuardado))
                             actualCorrecta = PasswordHasher.Verify(curPass.Text, hashGuardado);
                         else
-                            actualCorrecta = (hashGuardado == curPass.Text); // cuenta antigua en texto plano
+                            actualCorrecta = (hashGuardado == curPass.Text);
                     }
 
                     if (!actualCorrecta)
@@ -302,8 +283,6 @@ namespace ProyectoEnglish
                         Alerta("La contraseña actual no es correcta.");
                         return;
                     }
-
-                    // 3) Guardar la nueva contraseña SIEMPRE hasheada
                     using (var cmd = new SQLiteCommand(
                         "UPDATE login SET Password = @new WHERE UserID = @me", con))
                     {
@@ -320,8 +299,6 @@ namespace ProyectoEnglish
                 Alerta("Error: " + ex.Message.Replace("\r", " ").Replace("\n", " "));
             }
         }
-
-        // ===================== AYUDAS =====================
 
         private void Alerta(string texto)
         {

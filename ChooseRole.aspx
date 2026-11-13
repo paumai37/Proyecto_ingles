@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ChooseRole.aspx.cs" Inherits="ProyectoEnglish.ChooseRole" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ChooseRole.aspx.cs" Inherits="ProyectoEnglish.ChooseRole" %>
 
 
 <!DOCTYPE html>
@@ -13,7 +13,6 @@
 
   <form id="form1" runat="server">
 
-  <!-- ========== BARRA SUPERIOR ========== -->
   <header class="topbar">
     <h1>Healthcare Centre</h1>
     <div>

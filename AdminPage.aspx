@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="AdminPage.aspx.cs" Inherits="ProyectoEnglish.WebForm4" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="AdminPage.aspx.cs" Inherits="ProyectoEnglish.WebForm4" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +12,6 @@
 
   <form id="form1" runat="server">
 
-  <!-- ========== BARRA SUPERIOR ========== -->
   <header class="topbar">
     <h1>Healthcare Centre – Administrator</h1>
     <div>
@@ -23,7 +22,6 @@
 
   <main class="container">
 
-    <!-- ========== DOCTORES ========== -->
     <section class="card" id="doctors">
       <h2>Doctors</h2>
       <p>Create, view, update and delete doctors.</p>
@@ -77,7 +75,6 @@
       </div>
     </section>
 
-    <!-- ========== PACIENTES ========== -->
     <section class="card" id="patients">
       <h2>Patients</h2>
       <p>Create, view, update and delete patients and assign each one to a doctor.</p>

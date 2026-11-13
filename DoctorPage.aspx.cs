@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,8 +13,6 @@ namespace ProyectoEnglish
 {
     public partial class WebForm5 : System.Web.UI.Page
     {
-        // Pacientes de este doctor: los que lo tienen como doctor de cabecera
-        // o los que tiene asignados en doctor_patient (parámetro @doc)
         const string MisPacientes =
             "SELECT p.UserID FROM patients p WHERE p.FamilyDoctorID = @doc " +
             "OR p.UserID IN (SELECT PatientID FROM doctor_patient WHERE DoctorID = @doc)";
@@ -36,10 +34,6 @@ namespace ProyectoEnglish
 
             }
         }
-
-
-
-        // ===================== HISTORIALES =====================
 
 
 
@@ -233,10 +227,6 @@ namespace ProyectoEnglish
 
 
 
-        // ===================== CITAS =====================
-
-
-
         protected void btnScheduleAppointment_Click(object sender, EventArgs e)
         {
             if (!EsMiPaciente(dapPatient.SelectedValue))
@@ -251,8 +241,6 @@ namespace ProyectoEnglish
                 Alerta("La fecha es obligatoria y no puede ser anterior a hoy.");
                 return;
             }
-
-            // Horario de 09:00 a 19:30, en tramos de 30 minutos
             TimeSpan hora;
             if (!TimeSpan.TryParse(dapTime.Text, out hora) ||
                 hora.TotalMinutes < 540 || hora.TotalMinutes > 1170 || hora.TotalMinutes % 30 != 0)
@@ -270,8 +258,6 @@ namespace ProyectoEnglish
                 using (var con = new SQLiteConnection(cadena))
                 {
                     con.Open();
-
-                    // ¿El doctor ya tiene una cita a esa hora?
                     using (var cmd = new SQLiteCommand(
                         "SELECT 1 FROM appointments WHERE DoctorID = @doc AND AppointmentDate = @date " +
                         "AND AppointmentTime = @time AND Status = 'Scheduled';", con))
@@ -372,10 +358,6 @@ namespace ProyectoEnglish
 
 
 
-        // ===================== CAMBIAR CONTRASEÑA =====================
-
-
-
         protected void btnChangePassword_Click(object sender, EventArgs e)
         {
             if (curPass.Text == "" || newPass.Text == "" || confirmPass.Text == "")
@@ -403,8 +385,6 @@ namespace ProyectoEnglish
                 using (var con = new SQLiteConnection(cadena))
                 {
                     con.Open();
-
-                    // 1) Leer el hash guardado de este usuario
                     string hashGuardado = null;
                     using (var cmd = new SQLiteCommand(
                         "SELECT Password FROM login WHERE UserID = @me;", con))
@@ -413,16 +393,13 @@ namespace ProyectoEnglish
                         object r = cmd.ExecuteScalar();
                         if (r != null) hashGuardado = Convert.ToString(r);
                     }
-
-                    // 2) Comprobar que la contraseña actual es correcta
-                    //    (hasheando lo escrito y comparando con el hash guardado)
                     bool actualCorrecta = false;
                     if (hashGuardado != null)
                     {
                         if (PasswordHasher.IsHashed(hashGuardado))
                             actualCorrecta = PasswordHasher.Verify(curPass.Text, hashGuardado);
                         else
-                            actualCorrecta = (hashGuardado == curPass.Text); // cuenta antigua en texto plano
+                            actualCorrecta = (hashGuardado == curPass.Text);
                     }
 
                     if (!actualCorrecta)
@@ -430,8 +407,6 @@ namespace ProyectoEnglish
                         Alerta("La contraseña actual no es correcta.");
                         return;
                     }
-
-                    // 3) Guardar la nueva contraseña SIEMPRE hasheada
                     using (var cmd = new SQLiteCommand(
                         "UPDATE login SET Password = @new WHERE UserID = @me;", con))
                     {
@@ -447,10 +422,6 @@ namespace ProyectoEnglish
                 Alerta("Error: " + ex.Message.Replace("\r", " ").Replace("\n", " "));
             }
         }
-
-
-
-        // ===================== AYUDAS =====================
 
 
 
@@ -476,10 +447,6 @@ namespace ProyectoEnglish
                 lista.Items.Insert(0, new ListItem("-- Select a patient --", ""));
             }
         }
-
-
-
-        // Comprueba en el servidor que el paciente pertenece a este doctor
         private bool EsMiPaciente(string patientId)
         {
             if (patientId == "") return false;

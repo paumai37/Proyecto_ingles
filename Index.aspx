@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Index.aspx.cs" Inherits="ProyectoEnglish.WebForm6" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Index.aspx.cs" Inherits="ProyectoEnglish.WebForm6" %>
 
 <!DOCTYPE html>
 <html lang="en">

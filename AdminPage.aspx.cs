@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,7 +13,6 @@ namespace ProyectoEnglish
 {
     public partial class WebForm4 : System.Web.UI.Page
     {
-        // Contraseña inicial de las cuentas nuevas (se guarda siempre hasheada)
         private const string PasswordInicial = "123456";
 
         protected void Page_Load(object sender, EventArgs e)
@@ -40,21 +39,10 @@ namespace ProyectoEnglish
 
 
 
-
-        // ===================== DOCTORES =====================
-
-
-
-
-
-
-
         protected void btnCreateDoctor_Click(object sender, EventArgs e)
         {
             string nombre = docName.Text.Trim();
             if (nombre == "") { Alerta("El nombre es obligatorio."); return; }
-
-            // Regex: DNI/NIE y teléfono
             if (!Validador.EsDocumento(docId.Text.Trim())) { Alerta("DNI/NIE no válido (ej: 12345678Z)."); return; }
             if (!Validador.EsTelefono(docMobile.Text)) { Alerta("Teléfono no válido (9-15 dígitos, prefijo + opcional)."); return; }
 
@@ -69,8 +57,6 @@ namespace ProyectoEnglish
                     using (var tx = con.BeginTransaction())
                     {
                         long userId;
-
-                        // 1) ¿Ya existe en login (con cualquier rol)?
                         using (var cmd = new SQLiteCommand(
                             "SELECT UserID FROM login WHERE Username = @nombre;", con, tx))
                         {
@@ -81,7 +67,6 @@ namespace ProyectoEnglish
 
                         if (userId != 0)
                         {
-                            // 2a) Existe: comprobar que no sea ya doctor
                             using (var cmd = new SQLiteCommand(
                                 "SELECT 1 FROM doctors WHERE UserID = @id;", con, tx))
                             {
@@ -89,7 +74,7 @@ namespace ProyectoEnglish
                                 if (cmd.ExecuteScalar() != null)
                                 {
                                     Alerta("Ese usuario ya es doctor.");
-                                    return; // la transacción se revierte al salir
+                                    return;
                                 }
                             }
                             using (var cmd = new SQLiteCommand("UPDATE login SET Profile = 'Doctor' WHERE UserID = @id AND Profile = 'Patient';", con, tx))
@@ -100,7 +85,6 @@ namespace ProyectoEnglish
                         }
                         else
                         {
-                            // 2b) No existe: crear el login como Doctor (contraseña hasheada)
                             using (var cmd = new SQLiteCommand(
                                 "INSERT INTO login (Username, Password, Profile) VALUES (@nombre, @pass, 'Doctor');", con, tx))
                             {
@@ -110,8 +94,6 @@ namespace ProyectoEnglish
                             }
                             userId = con.LastInsertRowId;
                         }
-
-                        // 3) Insertar en doctors con el UserID correcto
                         using (var cmd = new SQLiteCommand(
                             "INSERT INTO doctors (UserID, Name, NationalID, Mobile) " +
                             "VALUES (@userId, @nombre, @nationalID, @mobile);", con, tx))
@@ -189,10 +171,8 @@ namespace ProyectoEnglish
                             "DELETE FROM doctors WHERE UserID = @id; " +
                             "DELETE FROM doctor_patient WHERE DoctorID = @id; " +
                             "UPDATE patients SET FamilyDoctorID = NULL WHERE FamilyDoctorID = @id; " +
-                            // si también es paciente, conserva el login como Patient
                             "UPDATE login SET Profile = 'Patient' WHERE UserID = @id AND Profile = 'Doctor' " +
                             "AND EXISTS (SELECT 1 FROM patients WHERE UserID = @id); " +
-                            // solo borra el login si era únicamente doctor
                             "DELETE FROM login WHERE UserID = @id AND Profile = 'Doctor';", con, tx))
                         {
                             cmd.Parameters.AddWithValue("@id", userId);
@@ -235,14 +215,6 @@ namespace ProyectoEnglish
 
 
 
-        // ===================== PACIENTES =====================
-
-
-
-
-
-
-
         protected void btnCreatePatient_Click(object sender, EventArgs e)
         {
             string nombre = patName.Text.Trim();
@@ -252,8 +224,6 @@ namespace ProyectoEnglish
                 Alerta("Nombre y doctor son obligatorios.");
                 return;
             }
-
-            // Regex: DNI/NIE y teléfono
             if (!Validador.EsDocumento(patId.Text.Trim())) { Alerta("DNI/NIE no válido (ej: 12345678Z)."); return; }
             if (!Validador.EsTelefono(patMobile.Text)) { Alerta("Teléfono no válido (9-15 dígitos, prefijo + opcional)."); return; }
 
@@ -268,8 +238,6 @@ namespace ProyectoEnglish
                     using (var tx = con.BeginTransaction())
                     {
                         long userId;
-
-                        // 1) ¿Ya existe en login (con cualquier rol)?
                         using (var cmd = new SQLiteCommand(
                             "SELECT UserID FROM login WHERE Username = @nombre;", con, tx))
                         {
@@ -280,7 +248,6 @@ namespace ProyectoEnglish
 
                         if (userId != 0)
                         {
-                            // 2a) Existe: comprobar que no sea ya paciente
                             using (var cmd = new SQLiteCommand(
                                 "SELECT 1 FROM patients WHERE UserID = @id;", con, tx))
                             {
@@ -288,13 +255,12 @@ namespace ProyectoEnglish
                                 if (cmd.ExecuteScalar() != null)
                                 {
                                     Alerta("Ese usuario ya es paciente.");
-                                    return; // al salir del using, la transacción se revierte
+                                    return;
                                 }
                             }
                         }
                         else
                         {
-                            // 2b) No existe: crear el login como Patient (contraseña hasheada)
                             using (var cmd = new SQLiteCommand(
                                 "INSERT INTO login (Username, Password, Profile) VALUES (@nombre, @pass, 'Patient');", con, tx))
                             {
@@ -304,8 +270,6 @@ namespace ProyectoEnglish
                             }
                             userId = con.LastInsertRowId;
                         }
-
-                        // 3) Insertar en patients con el UserID correcto
                         using (var cmd = new SQLiteCommand(
                             "INSERT INTO patients (UserID, Name, NationalID, Mobile, Address, DOB, FamilyDoctorID) " +
                             "VALUES (@userId, @nombre, @nationalID, @mobile, @address, @dob, @familyDoctorID);", con, tx))
@@ -394,7 +358,6 @@ namespace ProyectoEnglish
                         using (var cmd = new SQLiteCommand(
                             "DELETE FROM patients WHERE UserID = @id; " +
                             "DELETE FROM doctor_patient WHERE PatientID = @id; " +
-                            // solo borra el login si era únicamente paciente
                             "DELETE FROM login WHERE UserID = @id AND Profile = 'Patient';", con, tx))
                         {
                             cmd.Parameters.AddWithValue("@id", userId);
@@ -413,15 +376,6 @@ namespace ProyectoEnglish
 
             ListPatients();
         }
-
-
-
-
-
-
-
-
-        // ===================== AYUDAS =====================
 
 
 
@@ -473,14 +427,12 @@ namespace ProyectoEnglish
             using (var con = new SQLiteConnection(cadena))
             {
                 con.Open();
-
-                // Doctores para el desplegable y la lista de asignados
                 var dt = new DataTable();
                 using (var da = new SQLiteDataAdapter("SELECT DoctorID, UserID, Name FROM doctors ORDER BY Name;", con))
                     da.Fill(dt);
 
                 editFamilyDoctor.DataSource = dt;
-                editFamilyDoctor.DataValueField = "UserID";   // igual que patDoctor y ListPatients
+                editFamilyDoctor.DataValueField = "UserID";
                 editFamilyDoctor.DataTextField = "Name";
                 editFamilyDoctor.DataBind();
                 editFamilyDoctor.Items.Insert(0, new ListItem("(none)", ""));
@@ -489,8 +441,6 @@ namespace ProyectoEnglish
                 cblDoctors.DataValueField = "UserID";
                 cblDoctors.DataTextField = "Name";
                 cblDoctors.DataBind();
-
-                // Datos del paciente
                 using (var cmd = new SQLiteCommand(
                     "SELECT Name, NationalID, DOB, Mobile, Address, FamilyDoctorID FROM patients WHERE UserID = @id;", con))
                 {
@@ -510,8 +460,6 @@ namespace ProyectoEnglish
                         if (fd != null) fd.Selected = true;
                     }
                 }
-
-                // Doctores ya asignados
                 using (var cmd = new SQLiteCommand(
                     "SELECT DoctorID FROM doctor_patient WHERE PatientID = @id;", con))
                 {
@@ -548,11 +496,9 @@ namespace ProyectoEnglish
 
             if (editName.Text.Trim() == "")
             {
-                Alerta("El nombre es obligatorio.");   // el modal sigue abierto
+                Alerta("El nombre es obligatorio.");
                 return;
             }
-
-            // Regex: DNI/NIE y teléfono
             if (!Validador.EsDocumento(editId.Text.Trim())) { Alerta("DNI/NIE no válido (ej: 12345678Z)."); return; }
             if (!Validador.EsTelefono(editMobile.Text)) { Alerta("Teléfono no válido (9-15 dígitos, prefijo + opcional)."); return; }
 
@@ -579,8 +525,6 @@ namespace ProyectoEnglish
                             cmd.Parameters.AddWithValue("@id", userId);
                             cmd.ExecuteNonQuery();
                         }
-
-                        // Reemplazar las asignaciones
                         using (var cmd = new SQLiteCommand(
                             "DELETE FROM doctor_patient WHERE PatientID = @id;", con, tx))
                         {

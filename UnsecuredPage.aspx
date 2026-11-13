@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="UnsecuredPage.aspx.cs" Inherits="ProyectoEnglish.WebForm2" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="UnsecuredPage.aspx.cs" Inherits="ProyectoEnglish.WebForm2" %>
 
 <!DOCTYPE html>
 

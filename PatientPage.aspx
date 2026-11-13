@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PatientPage.aspx.cs" Inherits="ProyectoEnglish.WebForm3" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PatientPage.aspx.cs" Inherits="ProyectoEnglish.WebForm3" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +10,6 @@
 </head>
 <body>
 
-  <!-- ========== BARRA SUPERIOR ========== -->
   <header class="topbar">
     <h1>Healthcare Centre – Patient</h1>
     <div>
@@ -21,12 +20,10 @@
 
   <main class="container">
 
-    <!-- ========== DATOS PERSONALES ========== -->
     <section class="card">
       <h2>Personal information</h2>
       <span class="readonly-note">Read-only</span>
 
-      <!-- Los valores se cargan desde la base de datos -->
       <dl class="info">
         <div>
           <dt>Name</dt>
@@ -55,10 +52,8 @@
       </dl>
     </section>
 
-    <!-- ========== CITAS ========== -->
-  <form id="formCitas" runat="server">
+    <form id="formCitas" runat="server">
 
-    <!-- ========== AGENDAR CITA ========== -->
     <section class="card">
       <h2>Book an appointment</h2>
       <p>Choose a doctor, a date and a time.</p>
@@ -84,7 +79,6 @@
       <asp:Button ID="btnBookAppointment" runat="server" Text="Book appointment" CssClass="btn-create" OnClick="btnBookAppointment_Click" />
     </section>
 
-    <!-- ========== MIS CITAS ========== -->
     <section class="card">
       <h2>My appointments</h2>
       <p>Your upcoming and past appointments.</p>
@@ -126,7 +120,6 @@
 
   </form>
 
-    <!-- ========== HISTORIAL MÉDICO ========== -->
     <section class="card">
       <h2>My medical records</h2>
       <span class="readonly-note">Read-only</span>

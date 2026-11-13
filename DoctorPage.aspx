@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DoctorPage.aspx.cs" Inherits="ProyectoEnglish.WebForm5" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DoctorPage.aspx.cs" Inherits="ProyectoEnglish.WebForm5" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +12,6 @@
 
   <form id="form1" runat="server">
 
-  <!-- ========== BARRA SUPERIOR ========== -->
   <header class="topbar">
     <h1>Healthcare Centre – Doctor</h1>
     <div>
@@ -23,7 +22,6 @@
 
   <main class="container">
 
-    <!-- ========== SELECCIÓN DE PACIENTE ========== -->
     <section class="card">
       <h2>My patients</h2>
       <p>Select one of your patients to manage their medical records.</p>
@@ -37,7 +35,6 @@
       <asp:Button ID="btnViewRecords" runat="server" Text="View records" OnClick="btnViewRecords_Click" />
     </section>
 
-    <!-- ========== NUEVO / EDITAR HISTORIAL ========== -->
     <section class="card">
       <h2>Add / edit medical record</h2>
       <p>Patient: <strong id="selectedPatient" runat="server"></strong></p>
@@ -63,7 +60,6 @@
       <asp:Button ID="btnClearRecord" runat="server" Text="Clear" CssClass="btn-clear" OnClick="btnClearRecord_Click" />
     </section>
 
-    <!-- ========== LISTA DE HISTORIALES ========== -->
     <section class="card">
       <h2>Medical records</h2>
       <p>Records of the selected patient.</p>
@@ -98,7 +94,6 @@
       </div>
     </section>
 
-    <!-- ========== AGENDAR CITA ========== -->
     <section class="card">
       <h2>Schedule an appointment</h2>
       <p>Book an appointment for one of your patients.</p>
@@ -124,7 +119,6 @@
       <asp:Button ID="btnScheduleAppointment" runat="server" Text="Schedule appointment" CssClass="btn-create" OnClick="btnScheduleAppointment_Click" />
     </section>
 
-    <!-- ========== AGENDA ========== -->
     <section class="card">
       <h2>My agenda</h2>
       <p>Appointments with your patients.</p>
@@ -167,7 +161,6 @@
       </div>
     </section>
 
-    <!-- ========== CAMBIAR CONTRASEÑA ========== -->
     <section class="card">
       <h2>Change password</h2>
       <p>Use at least 6 characters, with letters and numbers.</p>
