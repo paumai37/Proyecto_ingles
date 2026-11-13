@@ -71,6 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ChooseRole.aspx" />
     <Content Include="css\login.css" />
     <Content Include="css\panel.css" />
     <Content Include="css\StyleSheet1.css" />
@@ -93,6 +94,13 @@
     <Content Include="Index.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChooseRole.aspx.cs">
+      <DependentUpon>ChooseRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ChooseRole.aspx.designer.cs">
+      <DependentUpon>ChooseRole.aspx</DependentUpon>
+    </Compile>
     <Compile Include="PasswordHasher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Login.aspx.cs">
