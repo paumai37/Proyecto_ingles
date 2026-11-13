@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
 
 namespace ProyectoEnglish
@@ -28,14 +29,14 @@ namespace ProyectoEnglish
                 return;
             }
 
+            loggedUser.InnerText = Convert.ToString(Session["Username"]);
+            LoadPersonalInfo();
+            LoadRecords();
+
             if (!IsPostBack)
             {
                 LoadDoctors();
                 LoadAppointments();
-                LoadRecords();
-                loggedUser.InnerText = Convert.ToString(Session["Username"]);
-                LoadPersonalInfo();
-                    
             }
         }
 
@@ -66,8 +67,8 @@ namespace ProyectoEnglish
 
             using (var con = new SQLiteConnection(Cadena))
             using (var da = new SQLiteDataAdapter(
-                @"SELECT r.AppointmentDate, r.Diagnosis, r.Treatment FROM records r JOIN patients p ON p.PatientID = r.PatientID WHERE p.UserID = @me
-                ORDER BY r.AppointmentDate DESC", con))
+                @"SELECT AppointmentDate, Diagnosis, Treatment FROM records WHERE PatientID = @me
+                ORDER BY AppointmentDate DESC", con))
             {
                 da.SelectCommand.Parameters.AddWithValue("@me", UserId);
                 da.Fill(dt);
@@ -245,6 +246,54 @@ namespace ProyectoEnglish
             }
 
             LoadAppointments();
+        }
+
+        // ===================== CAMBIAR CONTRASEÑA =====================
+
+        protected void btnChangePassword_Click(object sender, EventArgs e)
+        {
+            if (curPass.Text == "" || newPass.Text == "" || confirmPass.Text == "")
+            {
+                Alerta("Rellena todos los campos.");
+                return;
+            }
+
+            if (newPass.Text != confirmPass.Text)
+            {
+                Alerta("Las contraseñas nuevas no coinciden.");
+                return;
+            }
+
+            if (!Regex.IsMatch(newPass.Text, @"^(?=.*[A-Za-z])(?=.*\d).{6,}$"))
+            {
+                Alerta("La nueva contraseña debe tener al menos 6 caracteres, con letras y números.");
+                return;
+            }
+
+            try
+            {
+                using (var con = new SQLiteConnection(Cadena))
+                using (var cmd = new SQLiteCommand(
+                    "UPDATE login SET Password = @new WHERE UserID = @me AND Password = @old", con))
+                {
+                    cmd.Parameters.AddWithValue("@new", newPass.Text);
+                    cmd.Parameters.AddWithValue("@old", curPass.Text);
+                    cmd.Parameters.AddWithValue("@me", UserId);
+                    con.Open();
+
+                    if (cmd.ExecuteNonQuery() == 0)
+                    {
+                        Alerta("La contraseña actual no es correcta.");
+                        return;
+                    }
+                }
+
+                Alerta("Contraseña cambiada.");
+            }
+            catch (SQLiteException ex)
+            {
+                Alerta("Error: " + ex.Message.Replace("\r", " ").Replace("\n", " "));
+            }
         }
 
         // ===================== AYUDAS =====================

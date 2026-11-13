@@ -124,6 +124,28 @@
       </div>
     </section>
 
+    <!-- ========== CAMBIAR CONTRASEÑA ========== -->
+    <section class="card">
+      <h2>Change password</h2>
+      <p>Use at least 6 characters, with letters and numbers.</p>
+
+      <div class="form-grid">
+        <div>
+          <label for="curPass">Current password</label>
+          <asp:TextBox ID="curPass" runat="server" TextMode="Password"></asp:TextBox>
+        </div>
+        <div>
+          <label for="newPass">New password</label>
+          <asp:TextBox ID="newPass" runat="server" TextMode="Password"></asp:TextBox>
+        </div>
+        <div>
+          <label for="confirmPass">Confirm new password</label>
+          <asp:TextBox ID="confirmPass" runat="server" TextMode="Password"></asp:TextBox>
+        </div>
+      </div>
+      <asp:Button ID="btnChangePassword" runat="server" Text="Change password" CssClass="btn-edit" OnClick="btnChangePassword_Click" />
+    </section>
+
   </form>
 
     <!-- ========== HISTORIAL MÉDICO ========== -->
